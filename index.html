@@ -1,0 +1,288 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Draw machine for christmas party">
+<meta name="author" content="Edward Wu">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><!--加這一行的目的是要強迫網頁的內容，以裝置目前的寬度來做呈現-->
+<title>聖誕Party之抽籤機</title>
+<script src="jquery.min.js"></script>
+<style>
+* {
+	padding: 0px;
+	margin: 0px
+}
+#wrapper {
+	width: 300px;
+	margin: auto;
+	padding: 20px;
+}
+#wrapper h1 {
+	font-size: 18px;
+    text-align: center;
+}
+#peopleSelection, #colorSelection, #resultSection {
+	width: 100%;
+	float: left;
+	margin-top: 25px;
+}
+#peopleSelection pre, #colorSelection pre {
+	font-size: 15px;
+	margin-bottom: 10px;
+	border: 1px solid #999999;
+    padding: 3px;
+    width: 93%;
+}
+#peopleSelection h6, #colorSelection h6 {
+	float: left;
+	margin-top: 5px;
+	margin-right: 3px;
+}
+#peopleSelection select , #colorSelection select {
+	height: 25px;
+}
+#peopleSelection input[type=button], #colorSelection input[type=button] {
+	margin-left: 10px;
+	font-weight: bold;
+	width: 25px;
+}
+#peopleSelection div input[type=text], #colorSelection div input[type=text] {
+	width: 102px;
+	height: 18px;
+}
+#resultSection button {
+	margin-top: 5px;
+    margin-bottom: 10px;
+    height: 30px;
+    width: 95%;
+    text-align: center;
+    font-size: 14px;
+    background-color: #b30000;
+    color: #ffffff;
+    font-weight: normal;
+    border: none;
+}
+#resultSection button:active {
+	background-color: #ff0000;
+}
+#resultSection pre {
+	font-size: 15px;
+	padding: 3px;
+    width: 92%;
+}
+.clearFloat {
+	clear: both;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$("#peopleSelection input[title='addPeoBySelection']").on("click", addPeoBySelectionFn);
+		$("#peopleSelection input[title='addPeoByInput']").on("click", addPeoByInputFn);
+
+		$("#colorSelection input[title='addColorBySelection']").on("click", addColorBySelectionFn);
+		$("#colorSelection input[title='addColorByInput']").on("click", addColorByInputFn);
+
+		$("#resultSection button").on("click", drawingFn);
+	});
+	
+	function addPeoBySelectionFn(e) 
+	{
+		var optionVal = $("#peopleSelection select").val();
+		if (optionVal == null) {
+			return;
+		}
+
+		var preTag = $("#peopleSelection pre");
+		if (preTag.text() == "") {
+			preTag.text(optionVal);
+		} else if (!isElementInPreText(preTag.text(), optionVal)) {
+			preTag.text(preTag.text().trim() + "\n" + optionVal);
+		}
+	}
+
+	function addPeoByInputFn(e)
+	{
+		var inputVal = $("#peopleSelection div input:text").val().trim();
+		if (inputVal == "") {
+			return;
+		}
+
+		var preTag = $("#peopleSelection pre");
+		if (preTag.text() == "") {
+			preTag.text(inputVal);
+		} else if (!isElementInPreText(preTag.text(), inputVal)) {
+			preTag.text(preTag.text().trim() + "\n" + inputVal);
+		}
+	}
+
+	function addColorBySelectionFn(e)
+	{
+		var optionVal = $("#colorSelection select").val();
+		if (optionVal == null) {
+			return;
+		}
+
+		var preTag = $("#colorSelection pre");
+		if (preTag.text() == "") {
+			preTag.text(optionVal);
+		} else if (!isElementInPreText(preTag.text(), optionVal)) {
+			preTag.text(preTag.text().trim() + "\n" + optionVal);
+		}
+	}
+
+	function addColorByInputFn(e)
+	{
+		var inputVal = $("#colorSelection div input:text").val().trim();
+		if (inputVal == "") {
+			return;
+		}
+
+		var preTag = $("#colorSelection pre");
+		if (preTag.text() == "") {
+			preTag.text(inputVal);
+		} else if (!isElementInPreText(preTag.text(), inputVal)) {
+			preTag.text(preTag.text().trim() + "\n" + inputVal);
+		}
+	}
+
+	function drawingFn(e)
+	{
+		//Basic verify.
+		var peopleVal = $("#peopleSelection pre").text();
+		var colorVal = $("#colorSelection pre").text();
+
+		if (peopleVal== "") {
+			alert("至少要增加一個參加抽籤的人員！");
+			return;
+		}
+		if (colorVal == "") {
+			alert("至少要增加一個參加抽籤的顏色！");
+			return;
+		}
+
+		var peopleList = peopleVal.split("\n");
+		var colorList = colorVal.split("\n");
+		console.log ("People : " + peopleList + " / Color : " + colorList);
+
+		//Drawing.
+		var result = {};
+		var maxColorNumInPeople = Math.ceil(peopleList.length /  colorList.length);
+		var record = {};
+		for (var i = 0; i < peopleList.length; i++) {
+			var random = Math.floor(Math.random() * colorList.length);
+			var color = colorList[random];
+
+			result[peopleList[i]] = color;
+			if (color in record) {
+				record[color] = record[color] + 1;
+			} else {
+				record[color] = 1;
+			}
+
+			if (record[color] >= maxColorNumInPeople) {
+				colorList.splice(random, 1);
+			}
+		}
+
+		var resultText = "";
+		$.each(result, function(key, value){
+			resultText = resultText + key + "  ->  " + value + "\n";
+		});
+
+		$("#resultSection pre").text(resultText);
+		$("#resultSection pre").css("border", "1px solid red");
+		var link = document.createElement("a");
+     	link.href = "#resultSection";
+     	link.click();
+	}
+
+	function isElementInPreText(preText, element)
+	{
+		var ary = preText.split("\n");
+		for (var i = 0; i < ary.length; i++) {
+			if (element === ary[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function clearText(event) 
+	{
+		$(event.currentTarget).val("");
+	}
+
+</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<h1>聖誕Party之抽籤機</h1>
+
+		<section id="peopleSelection"> 
+			<pre></pre>
+			<h6>選擇加入抽籤的人選：</h6>
+			<select>
+				<option selected disabled>請選擇一個人...</option>
+				<option value="敬棠">敬棠</option>
+			  	<option value="志源">志源</option>
+			  	<option value="逸璿">逸璿</option>
+			  	<option value="浩恩">浩恩</option>
+			  	<option value="昆謙">昆謙</option>
+			  	<option value="佳靜">佳靜</option>
+			  	<option value="宜君">宜君</option>
+			  	<option value="品萱">品萱</option>
+			  	<option value="慈慧">慈慧</option>
+			  	<option value="映岑">映岑</option>
+			  	<option value="政霖">政霖</option>
+			  	<option value="士丕">士丕</option>
+			  	<option value="金峯">金峯</option>
+			</select>
+			<input type="button" value="+" title="addPeoBySelection">
+			<div style="margin-top:8px;">
+				<h6>手動加入抽籤的人選：</h6>
+				<input type="text" onClick="clearText(event)">
+				<input type="button" value="+" title="addPeoByInput">
+			</div>
+		</section>
+		<section id="colorSelection">
+			<pre></pre>
+			<h6>選擇加入抽籤的顏色：</h6>
+			<select>
+				<option selected disabled>請選擇一個顏色...</option>
+			  	<option value="紅">紅</option>
+			  	<option value="橙">橙</option>
+			  	<option value="黃">黃</option>
+			  	<option value="綠">綠</option>
+			  	<option value="藍">藍</option>
+			  	<option value="靛">靛</option>
+			  	<option value="紫">紫</option>
+			  	<option value="黑">黑</option>
+			  	<option value="灰">灰</option>
+			  	<option value="白">白</option>
+			</select>
+			<input type="button" value="+" title="addColorBySelection">
+			<div style="margin-top:5px;">
+				<h6>手動加入抽籤的顏色：</h6>
+				<input type="text" onClick="clearText(event)">
+				<input type="button" value="+" title="addColorByInput">
+			</div>
+		</section>
+		<section id="resultSection">
+			<button type="button">抽籤</button>
+			<pre></pre>
+		</section>
+		<div class="clearFloat"></div>
+	</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
