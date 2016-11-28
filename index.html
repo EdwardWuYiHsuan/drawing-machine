@@ -192,6 +192,9 @@
 
 		$("#resultSection pre").text(resultText);
 		$("#resultSection pre").css("border", "1px solid red");
+		$("#resultSection button").hide();
+
+		//Move Window scroll to Result Section.
 		var link = document.createElement("a");
      	link.href = "#resultSection";
      	link.click();
