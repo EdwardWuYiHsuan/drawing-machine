@@ -51,6 +51,10 @@
 	width: 102px;
 	height: 18px;
 }
+#resultSection h6 {
+	font-size: 15px;
+    color: #ff0000;
+}
 #resultSection button {
 	margin-top: 5px;
     margin-bottom: 10px;
@@ -67,9 +71,11 @@
 	background-color: #ff0000;
 }
 #resultSection pre {
+	border: 1px solid red;
 	font-size: 15px;
 	padding: 3px;
     width: 92%;
+    margin-top: 5px;
 }
 .clearFloat {
 	clear: both;
@@ -84,6 +90,8 @@
 		$("#colorSelection input[title='addColorByInput']").on("click", addColorByInputFn);
 
 		$("#resultSection button").on("click", drawingFn);
+		$("#resultSection pre").hide();
+		$("#resultSection h6").hide();
 	});
 	
 	function addPeoBySelectionFn(e) 
@@ -191,8 +199,9 @@
 		});
 
 		$("#resultSection pre").text(resultText);
-		$("#resultSection pre").css("border", "1px solid red");
 		$("#resultSection button").hide();
+		$("#resultSection pre").show();
+		$("#resultSection h6").show();
 
 		//Move Window scroll to Result Section.
 		var link = document.createElement("a");
@@ -273,6 +282,7 @@
 			</div>
 		</section>
 		<section id="resultSection">
+			<h6>抽籤結果如下：</h6>
 			<button type="button">抽籤</button>
 			<pre></pre>
 		</section>
