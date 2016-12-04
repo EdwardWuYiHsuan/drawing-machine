@@ -54,6 +54,7 @@
 #resultSection h6 {
 	font-size: 15px;
     color: #ff0000;
+    display: none;
 }
 #resultSection button {
 	margin-top: 5px;
@@ -76,6 +77,7 @@
 	padding: 3px;
     width: 92%;
     margin-top: 5px;
+    display: none;
 }
 .clearFloat {
 	clear: both;
@@ -90,8 +92,6 @@
 		$("#colorSelection input[title='addColorByInput']").on("click", addColorByInputFn);
 
 		$("#resultSection button").on("click", drawingFn);
-		$("#resultSection pre").hide();
-		$("#resultSection h6").hide();
 	});
 	
 	function addPeoBySelectionFn(e) 
